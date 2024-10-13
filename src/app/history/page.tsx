@@ -3,8 +3,9 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { FaEdit, FaTrash, FaHome, FaSearch, FaSync } from 'react-icons/fa';
 import { MdOutlineAddCircle } from "react-icons/md";
-
+import { FiRefreshCcw } from 'react-icons/fi'; 
 import Modal from '@/components/Modal';
+import { FaTimes } from 'react-icons/fa';
 
 // Define the Event type
 type Event = {
@@ -97,6 +98,7 @@ const History: React.FC = () => {
             });
     
             if (response.ok) {
+                (window.location as Location).reload(); 
                 const updatedEvent: Event = await response.json(); // Type assertion for updated event
                 // Update the state with the modified event
                 setEventHistory((prevEvents) =>
@@ -181,30 +183,44 @@ const History: React.FC = () => {
     };
     
 
+    const handleRefresh = () => {
+        // Reload the page to show all events
+        window.location.reload();
+    };
+
+
     return (
         <div className="p-4">
-            <nav className='flex justify-end gap-2'>
-                <Link href="/dashboard">
-                    <button className="mt-4 p-2 text-blue-500 rounded-md hover:text-blue-700 focus:outline-none">
+            <nav className='flex items-center justify-between p-5'>
+            <section>
+                <button className="transform hover:scale-110 transition-transform duration-300" onClick={handleRefresh}>
+                    <FiRefreshCcw size={24} />
+                </button>
+                </section>
+                <section className='flex gap-2 items-center'> 
+                    <Link href="/dashboard">
+                    <button className="  p-2  text-black focus:outline-none transform hover:scale-110 transition-transform duration-300">
                         <FaHome size={24} /> {/* Home icon */}
                     </button>
                 </Link>
                 <button
-                    className="mt-4 p-0 text-green-500 hover:text-green-700 focus:outline-none"
+                    className="  p-0 text-black focus:outline-none transform hover:scale-110 transition-transform duration-300"
                     onClick={() => setShowSearchModal(true)}>
-                    <FaSearch size={24} /> 
+                    <FaSearch size={22} /> 
                 </button>
 
-                <button onClick={() => setIsAddModalOpen(true)} className="px-4 py-2 bg-green-500 text-white rounded-md">
-                <MdOutlineAddCircle size={24} />
+                <button onClick={() => setIsAddModalOpen(true)} className="   text-black focus:outline-none transform hover:scale-110 transition-transform duration-300">
+                <MdOutlineAddCircle size={28} />
                 </button>
+                </section>
+                
                 
             </nav>
 
 
             <h2 className="text-xl font-bold mb-4 text-center">Event History</h2>
 
-            <ul className="w-1/2 mx-auto mb-24">
+            <ul className="w-50 mx-auto mb-24">
                 {filteredEvents.map((event) => (
                     <li key={event._id} className="flex flex-row items-center justify-between mb-4 border rounded p-4 shadow">
                         <div>
@@ -243,6 +259,7 @@ const History: React.FC = () => {
                 ))}
             </ul>
 
+
             {isEditing && currentEvent && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-md shadow-lg w-96 relative">
@@ -250,7 +267,7 @@ const History: React.FC = () => {
                             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                             onClick={() => { setIsEditing(false); setCurrentEvent(null); }} 
                         >
-                            &times; {/* Close icon */}
+                            <FaTimes />{/* Close icon */}
                         </button>
                         <h3 className="text-xl font-bold mb-4">Edit Event</h3>
                         <input
@@ -297,7 +314,7 @@ const History: React.FC = () => {
                             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
                             onClick={() => setIsAddModalOpen(false)}
                         >
-                            &times; {/* "X" icon for closing */}
+                            <FaTimes />{/* "X" icon for closing */}
                         </button>
                         <h2 className="text-lg font-bold mb-4">Add New Event</h2>
                         <form onSubmit={handleAddNewEntry} className="flex flex-col">
@@ -359,7 +376,7 @@ const History: React.FC = () => {
                             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
                             onClick={() => setShowSearchModal(false)} // Close search modal
                         >
-                            &times; {/* Close icon */}
+                            <FaTimes />{/* Close icon */}
                         </button>
                         <h3 className="text-xl font-bold mb-4 text-center">Search Events</h3>
                         <input
@@ -369,6 +386,7 @@ const History: React.FC = () => {
                             onChange={(e) => setSearchTerm(e.target.value)} // Update search term
                             placeholder="Enter search term..."
                         />
+                        
                     </div>
                 </div>
             )}

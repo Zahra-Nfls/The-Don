@@ -1,26 +1,25 @@
 import { MongoClient } from 'mongodb';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Please add your MongoDB URI to .env.local');
-}
+const uri = process.env.MONGODB_URI || ''; // Ensure this is set in your .env
+let cachedClient: MongoClient | null = null;
+let cachedDb: any = null; // Change `any` to your database type if needed
 
-const uri: string = process.env.MONGODB_URI;
-const options = {};
-
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
-
-if (process.env.NODE_ENV === 'development') {
-  // Use global variable to preserve connection during hot reloads in dev mode
-  if (!(global as any)._mongoClientPromise) {
-    client = new MongoClient(uri, options);
-    (global as any)._mongoClientPromise = client.connect();
+export default async function connectToDatabase() {
+  if (cachedClient && cachedDb) {
+    return cachedDb; // Return the cached database instance
   }
-  clientPromise = (global as any)._mongoClientPromise;
-} else {
-  // In production, it's better to not use a global variable
-  client = new MongoClient(uri, options);
-  clientPromise = client.connect();
-}
 
-export default clientPromise;
+  const client = new MongoClient(uri, {
+    serverSelectionTimeoutMS: 5000, // Set a timeout for server selection
+  });
+
+  try {
+    await client.connect();
+    cachedClient = client;
+    cachedDb = client.db(); // Get the database instance
+    return cachedDb; // Return the database instance
+  } catch (error) {
+    console.error('Error connecting to MongoDB:', error);
+    throw new Error('Could not connect to database');
+  }
+}
