@@ -311,7 +311,7 @@ const Bills: React.FC = () => {
             {/* Add Bill Modal */}
             {isAddModalOpen && (
     <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full mx-auto relative">
+        <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-10 relative">
             <button
                 className="absolute top-2 right-2 text-gray-700 p-1"
                 onClick={() => {
@@ -466,7 +466,7 @@ const Bills: React.FC = () => {
             {/* Search Modal */}
             {showSearchModal && (
                 <div className="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl w-full mx-auto relative">
+                    <div className="bg-white p-6 rounded-lg shadow-lg max-w-xl mx-auto relative">
                         <button
                             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 p-1"
                             onClick={() => setShowSearchModal(false)}

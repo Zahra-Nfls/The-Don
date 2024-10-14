@@ -75,11 +75,11 @@ const ActionModal: React.FC<ActionModalProps> = ({
                     <button onClick={handleDelete} className="flex items-center">
                         <FaTrash className="text-red-500 mr-2" /> Delete
                     </button>
-                    <button onClick={handleMarkAsPaid} className="flex items-center">
-                        <FaCheck className="text-green-500 mr-2" /> Mark as Paid
-                    </button>
                     <button onClick={handlePaymentDetailsClick} className="flex items-center">
                         <FaMoneyBillWave className="text-yellow-500 mr-2" /> Payment Details
+                    </button>
+                    <button onClick={handleMarkAsPaid} className="flex items-center">
+                        <FaCheck className="text-green-500 mr-2" /> Mark as Paid
                     </button>
                     <div >
                         {recentlyPaidBill && (

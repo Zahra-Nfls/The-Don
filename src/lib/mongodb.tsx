@@ -1,25 +1,26 @@
+// lib/mongodb.ts
 import { MongoClient } from 'mongodb';
 
-const uri = process.env.MONGODB_URI || ''; // Ensure this is set in your .env
-let cachedClient: MongoClient | null = null;
-let cachedDb: any = null; // Change `any` to your database type if needed
+const uri = process.env.MONGODB_URI || '';
 
-export default async function connectToDatabase() {
-  if (cachedClient && cachedDb) {
-    return cachedDb; // Return the cached database instance
-  }
-
-  const client = new MongoClient(uri, {
-    serverSelectionTimeoutMS: 5000, // Set a timeout for server selection
-  });
-
-  try {
-    await client.connect();
-    cachedClient = client;
-    cachedDb = client.db(); // Get the database instance
-    return cachedDb; // Return the database instance
-  } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
-    throw new Error('Could not connect to database');
-  }
+if (!uri) {
+    throw new Error('Please add your Mongo URI to .env.local');
 }
+
+let client: MongoClient | undefined;
+let clientPromise: Promise<MongoClient>;
+
+if (process.env.NODE_ENV === 'development') {
+    // Use a cached client during development to avoid creating a new connection every time.
+    if (!global._mongoClientPromise) {
+        client = new MongoClient(uri);
+        global._mongoClientPromise = client.connect();
+    }
+    clientPromise = global._mongoClientPromise;
+} else {
+    // Create a new client in production.
+    client = new MongoClient(uri);
+    clientPromise = client.connect();
+}
+
+export default clientPromise;
